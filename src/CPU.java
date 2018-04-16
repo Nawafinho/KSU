@@ -9,16 +9,28 @@
  * @author USER
  */
 public class CPU {
-    
-    public static void Run(PCB pcb){
-        while (true) {  
-            if(pcb.getEETime()<pcb.getPC())
+
+    public static void Run(PCB pcb) {
+        pcb.setState(State.RUNNING);
+        while (true) {
+            if (pcb.getEETime() < pcb.getPC()) {
+                
                 break;
-            OS.clockInc();
-            //System.out.println(pcb.getPC());
+            }
             pcb.PCInc();
+            OS.clockInc();
+            interruptType type = Interrupt.interruptTerminateGenerator();
+            if(type != null){
+                OS.ISRi(pcb , type);
+                System.out.println("CPU.Run()"+ type);
+                break;
+            }
             
+            
+            
+
+            //System.out.println(pcb.getPC());
         }
     }
-    
+
 }

@@ -8,13 +8,16 @@
  *
  * @author USER
  */
-public class PCB implements Comparable<PCB>{
+public class PCB implements Comparable<PCB> {
 
     private int size;
     private int EETime;
+    private int IOTime;
+
     private int ID;
     private State state;
     private int PC;
+    private int IOC;
 
     public int getPC() {
         return PC;
@@ -23,18 +26,23 @@ public class PCB implements Comparable<PCB>{
     public void setPC(int PC) {
         this.PC = PC;
     }
-    
 
     public PCB(int inID, int inEETime, int inSize) {
         state = state.NEW;
         size = inSize;
         EETime = inEETime;
+        IOTime = 0;
         PC = 0;
+        IOC = 0;
         state = state.READY;
     }
-    
+
     public void PCInc() {
         PC++;
+    }
+
+    public void IOCInc() {
+        IOC++;
     }
 
     public int getSize() {
@@ -69,12 +77,28 @@ public class PCB implements Comparable<PCB>{
         this.state = state;
     }
 
+    public int getIOTime() {
+        return IOTime;
+    }
+
+    public void setIOTime(int IOTime) {
+        this.IOTime = IOTime;
+    }
+
+    public int getIOC() {
+        return IOC;
+    }
+
+    public void setIOC(int IOC) {
+        this.IOC = IOC;
+    }
+
     @Override
     public int compareTo(PCB t) {
-        if (this.EETime-this.PC == t.EETime-PC) {
+        if (this.EETime - this.PC == t.EETime - PC) {
             return 0;
         }
-        if (this.EETime-this.PC < t.EETime-PC) {
+        if (this.EETime - this.PC < t.EETime - PC) {
             return -1;
         }
         return 1;
