@@ -18,26 +18,16 @@ public class Schedulers {
     
 
     public void JobScheduler(PriorityQueue<Program> programs , PriorityQueue<PCB> pcbs ) {
-        boolean tst = !programs.isEmpty() && OS.getCurrentSize() + programs.peek().getSize() <= OS.getRAMsIZESize() ;
-        System.out.println("Schedulers.JobScheduler() 1"+ tst);
         while (!programs.isEmpty() && OS.getCurrentSize() + programs.peek().getSize() <= OS.getRAMsIZESize() ) {
             Program program = programs.poll();
             pcb = new PCB(program.getID(), program.getEETime(), program.getSize());
-            pcb.setState(State.READY);
-            insJob(pcb);
-            System.out.println("Schedulers.JobScheduler() " + OS.getCurrentSize());
+            OS.insJob(pcb);
         }
     }
     
     public PCB CPUScheduler() {
         OS.setCurrentSize(OS.getCurrentSize()-OS.getPcbs().peek().getSize());
         return OS.getPcbs().poll();
-    }
-    
-    public void insJob(PCB pcb){
-        OS.setCurrentSize(pcb.getSize());
-        OS.getPcbs().add(pcb);
-        System.out.println("Schedulers.insJob()");
     }
     
 

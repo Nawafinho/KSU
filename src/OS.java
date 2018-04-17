@@ -29,10 +29,10 @@ public class OS {
     private static LinkedList<PCB> IOs = new LinkedList<>();
 
     private static Schedulers schedulers = new Schedulers();
+    public static IO io = new IO(IOs);
     private static Random random = new Random();
 
     private static int clock = 0;
-
 
     private static int IOclock = 0;
     private static final int RAMsIZE = 163840;
@@ -41,36 +41,40 @@ public class OS {
     private static int ID = 0;
     private static int normallTerminate = 0;
     private static int abnormallTerminate = 0;
+    
+    public static int i = 0;
 
     public static void main(String[] args) throws IOException {
 
         programsGenerator();
 
-        int ts = 0;
+        
         programsReader();
-        while (!programs.isEmpty()||!IOs.isEmpty()) {
+        while (!programs.isEmpty() || !IOs.isEmpty()) {
             clockInc();
-            if (pcbs.isEmpty()&&IOs.isEmpty()) {
-                System.out.println(++ts);
+            if (pcbs.isEmpty() && IOs.isEmpty()) {
+                
                 schedulers.JobScheduler(programs, pcbs);
-                System.out.println("OS.main()");
+                
             }
             while (!pcbs.isEmpty()) {
+                
                 CPU.Run(schedulers.CPUScheduler());
-                System.out.println("OS.main()1");
+
             }
+            IORun();
 
         }
         System.out.println(ID);
         System.out.println(Terminate.size());
+        System.out.println(Terminate.peek().getState());
         System.out.println("END");
     }
 
     public static void ISRi(PCB pcb, interruptType type) {
         switch (type) {
             case Interrupt:
-                pcb.setState(State.READY);
-                schedulers.insJob(pcb);
+                insJob(pcb);
                 break;
             case IOInterrupt:
                 pcb.setIOTime(random.nextInt(200 - 100 + 1) + 100);
@@ -78,11 +82,11 @@ public class OS {
                 break;
             case normallTerminate:
                 normallTerminate++;
-                Terminate.add(pcb);
+                insTerminate(pcb);
                 break;
             case abnormallTerminate:
                 abnormallTerminate++;
-                Terminate.add(pcb);
+                insTerminate(pcb);
                 break;
             default:
                     ;
@@ -99,9 +103,28 @@ public class OS {
         }
     }
 
+    public static void insJob(PCB pcb) {
+        pcb.setState(State.READY);
+        currentSize += pcb.getSize();
+        pcbs.add(pcb);
+    }
+
+    public static void insTerminate(PCB pcb) {
+        System.out.println(++i);
+        pcb.setState(State.TERMINATED);
+        Terminate.add(pcb);
+    }
+
+    public static void IORun() {
+        if (!IOs.isEmpty()) {
+            io.Trans();
+        }
+    }
+
     static public void clockInc() {
         clock++;
     }
+
     static public void IOclockInc() {
         IOclock++;
     }
@@ -204,8 +227,8 @@ public class OS {
     public static void setSchedulers(Schedulers schedulers) {
         OS.schedulers = schedulers;
     }
-    
-        public static LinkedList<PCB> getIOs() {
+
+    public static LinkedList<PCB> getIOs() {
         return IOs;
     }
 

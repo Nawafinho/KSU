@@ -10,25 +10,23 @@ import java.util.LinkedList;
  *
  * @author USER
  */
-public class IO extends Thread {
+public class IO {
 
     private LinkedList<PCB> IOs = new LinkedList<>();
+    private int IOclock = 0;
 
     public IO(LinkedList<PCB> IOs) {
         this.IOs = IOs;
     }
 
-    @Override
-    public void run() {
-        while (!OS.getPcbs().isEmpty() || !OS.getPrograms().isEmpty() || !IOs.isEmpty()) {
-            if (!IOs.isEmpty()) {
-                
-            }
+    public void Trans() {
+        IOs.peek().IOCInc();
+        if (Interrupt.IOinterrupt() || IOs.peek().getIOC() == IOs.peek().getIOTime()) {
+            IOremove();
         }
     }
-    
-    private void IOtrans(PCB pcb){
-        
-    }
 
+    private void IOremove() {
+        OS.insJob(IOs.poll());
+    }
 }

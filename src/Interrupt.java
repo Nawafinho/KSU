@@ -34,7 +34,7 @@ private static Random random = new Random();
         }
         return null;
     }
-    public  static boolean IOinterrupt(){
+    public static boolean IOinterrupt(){
         if(random.nextInt(5 - 1 + 1) + 1==1)
             return true;
         return false;

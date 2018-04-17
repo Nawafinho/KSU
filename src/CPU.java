@@ -13,8 +13,10 @@ public class CPU {
     public static void Run(PCB pcb) {
         pcb.setState(State.RUNNING);
         while (true) {
+            
+            OS.IORun();
             if (pcb.getEETime() < pcb.getPC()) {
-                
+                OS.insTerminate(pcb);
                 break;
             }
             pcb.PCInc();
@@ -22,14 +24,8 @@ public class CPU {
             interruptType type = Interrupt.interruptTerminateGenerator();
             if(type != null){
                 OS.ISRi(pcb , type);
-                System.out.println("CPU.Run()"+ type);
-                break;
+                return;
             }
-            
-            
-            
-
-            //System.out.println(pcb.getPC());
         }
     }
 
