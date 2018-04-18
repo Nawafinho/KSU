@@ -15,7 +15,7 @@ public class CPU {
         while (true) {
             
             OS.IORun();
-            if (pcb.getEETime() < pcb.getPC()) {
+            if (pcb.getEETime() == pcb.getPC()) {
                 OS.insTerminate(pcb);
                 break;
             }

@@ -41,6 +41,8 @@ public class OS {
     private static int ID = 0;
     private static int normallTerminate = 0;
     private static int abnormallTerminate = 0;
+    private static double totalSize = 0 ;
+    private static int CPUBoundJobs = 0 ;
     
     public static int i = 0;
 
@@ -65,10 +67,17 @@ public class OS {
             IORun();
 
         }
+        System.out.print("The number of initially generated jobs stored on the H-disk = ");
         System.out.println(ID);
-        System.out.println(Terminate.size());
-        System.out.println(Terminate.peek().getState());
-        System.out.println("END");
+        System.out.print("The average program size of all jobs = ");
+        System.out.println(totalSize/ID + "KB");
+        System.out.print("The average number of jobs that have completed their execution normally = ");
+        System.out.println(normallTerminate);
+        System.out.print("The average number of jobs that have completed their execution abnormally = ");
+        System.out.println(abnormallTerminate);
+        System.out.print("The number of CPU bound jobs = ");
+        System.out.println(CPUBoundJobs);
+        
     }
 
     public static void ISRi(PCB pcb, interruptType type) {
@@ -95,10 +104,10 @@ public class OS {
 
     static private void programsReader() throws IOException {
         String contents = new String(Files.readAllBytes(Paths.get("Programs.txt")));
-        //System.out.println(contents);
         String[] strings = contents.split("\\r?\\n");
         for (String i : strings) {
             Program program = new Program(Integer.parseInt(i.split(";")[0].split(":")[1]), Integer.parseInt(i.split(";")[1].split(":")[1]), Integer.parseInt(i.split(";")[2].split(":")[1]));
+            totalSize += Double.parseDouble(i.split(";")[2].split(":")[1]);
             programs.add(program);
         }
     }
@@ -110,8 +119,9 @@ public class OS {
     }
 
     public static void insTerminate(PCB pcb) {
-        System.out.println(++i);
         pcb.setState(State.TERMINATED);
+        if(pcb.getPC()>pcb.getIOC())
+            CPUBoundJobs++;
         Terminate.add(pcb);
     }
 
